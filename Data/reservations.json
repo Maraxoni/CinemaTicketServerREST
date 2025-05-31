@@ -1,0 +1,141 @@
+[
+  {
+    "ReservationId": 1,
+    "ScreeningId": 0,
+    "AccountUsername": null,
+    "ReservedSeats": []
+  },
+  {
+    "ReservationId": 2,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      67,
+      68
+    ]
+  },
+  {
+    "ReservationId": 3,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      87,
+      48,
+      47
+    ]
+  },
+  {
+    "ReservationId": 4,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      47,
+      26
+    ]
+  },
+  {
+    "ReservationId": 5,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      24,
+      68
+    ]
+  },
+  {
+    "ReservationId": 6,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      68,
+      70
+    ]
+  },
+  {
+    "ReservationId": 7,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      28,
+      70
+    ]
+  },
+  {
+    "ReservationId": 8,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      25,
+      68
+    ]
+  },
+  {
+    "ReservationId": 9,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      67,
+      64
+    ]
+  },
+  {
+    "ReservationId": 10,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      44,
+      49,
+      48
+    ]
+  },
+  {
+    "ReservationId": 11,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      45,
+      30
+    ]
+  },
+  {
+    "ReservationId": 12,
+    "ScreeningId": 0,
+    "AccountUsername": "Amon",
+    "ReservedSeats": [
+      46,
+      50
+    ]
+  },
+  {
+    "ReservationId": 14,
+    "ScreeningId": 0,
+    "AccountUsername": "user",
+    "ReservedSeats": [
+      28,
+      27,
+      26,
+      30,
+      7,
+      8,
+      9,
+      48,
+      49
+    ]
+  },
+  {
+    "ReservationId": 15,
+    "ScreeningId": 1,
+    "AccountUsername": "user",
+    "ReservedSeats": [
+      70,
+      69,
+      68,
+      29,
+      48,
+      67,
+      50,
+      71,
+      49
+    ]
+  }
+]
