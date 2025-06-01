@@ -107,19 +107,14 @@
     ]
   },
   {
-    "ReservationId": 14,
-    "ScreeningId": 0,
+    "ReservationId": 13,
+    "ScreeningId": 1,
     "AccountUsername": "user",
     "ReservedSeats": [
-      28,
-      27,
-      26,
-      30,
-      7,
-      8,
-      9,
-      48,
-      49
+      68,
+      70,
+      49,
+      69
     ]
   },
   {
@@ -127,15 +122,9 @@
     "ScreeningId": 1,
     "AccountUsername": "user",
     "ReservedSeats": [
-      70,
-      69,
-      68,
-      29,
-      48,
-      67,
-      50,
-      71,
-      49
+      51,
+      52,
+      53
     ]
   }
 ]
