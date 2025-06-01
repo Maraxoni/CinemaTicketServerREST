@@ -18,24 +18,28 @@ namespace CinemaTicketServerREST.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Reservation>> GetAll([FromQuery] string? username)
         {
-            if (string.IsNullOrEmpty(username))
-            {
-                return Ok(Reservations);
-            }
+            var result = string.IsNullOrEmpty(username)
+                ? Reservations
+                : Reservations.Where(r =>
+                        !string.IsNullOrEmpty(r.AccountUsername) &&
+                        r.AccountUsername.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            var filtered = Reservations
-                .Where(r => !string.IsNullOrEmpty(r.AccountUsername) &&
-                            r.AccountUsername.Equals(username, System.StringComparison.OrdinalIgnoreCase))
-                .ToList();
-
-            return Ok(filtered);
+            LogDataToConsole("GET ALL");
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Reservation> GetById(int id)
         {
             var reservation = Reservations.FirstOrDefault(r => r.ReservationId == id);
-            return reservation is null ? NotFound() : Ok(reservation);
+            if (reservation == null)
+            {
+                Console.WriteLine($"GET {id} – Not Found");
+                return NotFound();
+            }
+
+            Console.WriteLine($"GET {id} – Found: {FormatReservation(reservation)}");
+            return Ok(reservation);
         }
 
         [HttpPost]
@@ -45,13 +49,13 @@ namespace CinemaTicketServerREST.Controllers
             reservation.ReservationId = newId;
 
             Reservations.Add(reservation);
+            UpdateScreeningAvailableSeats(reservation, reserve: true);
 
-            // Aktualizacja dostępnych miejsc w seansie
-            UpdateScreeningAvailableSeats(reservation.ScreeningId);
-
-            // Zapisz rezerwacje i seanse do plików
             JsonStorage.SaveToFile(FilePathR, Reservations);
             JsonStorage.SaveToFile(FilePathS, Screenings);
+
+            Console.WriteLine($"POST – Created: {FormatReservation(reservation)}");
+            LogDataToConsole("AFTER CREATE");
 
             return CreatedAtAction(nameof(GetById), new { id = reservation.ReservationId }, reservation);
         }
@@ -61,20 +65,24 @@ namespace CinemaTicketServerREST.Controllers
         {
             var existing = Reservations.FirstOrDefault(r => r.ReservationId == id);
             if (existing == null)
+            {
+                Console.WriteLine($"PUT {id} – Not Found");
                 return NotFound();
+            }
 
-            int oldScreeningId = existing.ScreeningId;
+            UpdateScreeningAvailableSeats(existing, reserve: false);
 
             existing.ScreeningId = updatedReservation.ScreeningId;
             existing.AccountUsername = updatedReservation.AccountUsername;
             existing.ReservedSeats = updatedReservation.ReservedSeats;
 
-            UpdateScreeningAvailableSeats(oldScreeningId);
-            if (oldScreeningId != updatedReservation.ScreeningId)
-                UpdateScreeningAvailableSeats(updatedReservation.ScreeningId);
+            UpdateScreeningAvailableSeats(existing, reserve: true);
 
             JsonStorage.SaveToFile(FilePathR, Reservations);
             JsonStorage.SaveToFile(FilePathS, Screenings);
+
+            Console.WriteLine($"PUT {id} – Updated: {FormatReservation(existing)}");
+            LogDataToConsole("AFTER UPDATE");
 
             return Ok(existing);
         }
@@ -84,37 +92,61 @@ namespace CinemaTicketServerREST.Controllers
         {
             var reservation = Reservations.FirstOrDefault(r => r.ReservationId == id);
             if (reservation == null)
+            {
+                Console.WriteLine($"DELETE {id} – Not Found");
                 return NotFound();
+            }
 
             Reservations.Remove(reservation);
-
-            UpdateScreeningAvailableSeats(reservation.ScreeningId);
+            UpdateScreeningAvailableSeats(reservation, reserve: false);
 
             JsonStorage.SaveToFile(FilePathR, Reservations);
             JsonStorage.SaveToFile(FilePathS, Screenings);
 
+            Console.WriteLine($"DELETE {id} – Removed: {FormatReservation(reservation)}");
+            LogDataToConsole("AFTER DELETE");
+
             return NoContent();
         }
 
-        private void UpdateScreeningAvailableSeats(int screeningId)
+        private void UpdateScreeningAvailableSeats(Reservation reservation, bool reserve)
         {
-            var screening = Screenings.FirstOrDefault(s => s.ScreeningID == screeningId);
+            var screening = Screenings.FirstOrDefault(s => s.ScreeningID == reservation.ScreeningId);
             if (screening == null) return;
 
-            var reservedSeats = Reservations
-                .Where(r => r.ScreeningId == screeningId)
-                .SelectMany(r => r.ReservedSeats)
-                .Distinct()
-                .Where(seat => seat >= 0 && seat < screening.AvailableSeats.Length)
-                .ToList();
-
-            for (int i = 0; i < screening.AvailableSeats.Length; i++)
+            foreach (var seatIndex in reservation.ReservedSeats)
             {
-                screening.AvailableSeats[i] = !reservedSeats.Contains(i);
+                if (seatIndex >= 0 && seatIndex < screening.AvailableSeats.Length)
+                {
+                    screening.AvailableSeats[seatIndex] = !reserve;
+                }
             }
 
-            // **Usuń ten zapis z UpdateScreeningAvailableSeats** - robimy zapis tylko w Create/Update/Delete
-            // JsonStorage.SaveToFile(FilePathS, Screenings);
+            ScreeningController.UpdateSeats(screening);
+        }
+
+        private void LogDataToConsole(string context)
+        {
+            Console.WriteLine($"--- {context} ---");
+
+            Console.WriteLine("Reservations:");
+            foreach (var r in Reservations)
+            {
+                Console.WriteLine(FormatReservation(r));
+            }
+
+            Console.WriteLine("Screenings:");
+            foreach (var s in Screenings)
+            {
+                Console.WriteLine($"ScreeningID: {s.ScreeningID}, MovieID: {s.MovieID}, Start: {s.StartTime}, Seats: [{string.Join(",", s.AvailableSeats.Select(b => b ? "1" : "0"))}]");
+            }
+
+            Console.WriteLine("---------------------");
+        }
+
+        private string FormatReservation(Reservation r)
+        {
+            return $"ReservationID: {r.ReservationId}, User: {r.AccountUsername}, ScreeningID: {r.ScreeningId}, Seats: [{string.Join(",", r.ReservedSeats)}]";
         }
     }
 }

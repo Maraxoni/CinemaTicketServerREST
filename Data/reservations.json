@@ -111,20 +111,11 @@
     "ScreeningId": 1,
     "AccountUsername": "user",
     "ReservedSeats": [
-      68,
+      69,
       70,
-      49,
-      69
-    ]
-  },
-  {
-    "ReservationId": 15,
-    "ScreeningId": 1,
-    "AccountUsername": "user",
-    "ReservedSeats": [
-      51,
-      52,
-      53
+      71,
+      72,
+      73
     ]
   }
 ]
