@@ -2,17 +2,15 @@
   {
     "ReservationId": 1,
     "ScreeningId": 0,
-    "AccountUsername": null,
-    "ReservedSeats": []
-  },
-  {
-    "ReservationId": 2,
-    "ScreeningId": 0,
-    "AccountUsername": "Amon",
+    "AccountUsername": "user",
     "ReservedSeats": [
-      67,
-      68
-    ]
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "Links": []
   },
   {
     "ReservationId": 3,
@@ -22,7 +20,8 @@
       87,
       48,
       47
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 4,
@@ -31,7 +30,8 @@
     "ReservedSeats": [
       47,
       26
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 5,
@@ -40,7 +40,8 @@
     "ReservedSeats": [
       24,
       68
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 6,
@@ -49,7 +50,8 @@
     "ReservedSeats": [
       68,
       70
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 7,
@@ -58,7 +60,8 @@
     "ReservedSeats": [
       28,
       70
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 8,
@@ -67,7 +70,8 @@
     "ReservedSeats": [
       25,
       68
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 9,
@@ -76,7 +80,8 @@
     "ReservedSeats": [
       67,
       64
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 10,
@@ -86,7 +91,8 @@
       44,
       49,
       48
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 11,
@@ -95,7 +101,8 @@
     "ReservedSeats": [
       45,
       30
-    ]
+    ],
+    "Links": []
   },
   {
     "ReservationId": 12,
@@ -104,18 +111,19 @@
     "ReservedSeats": [
       46,
       50
-    ]
+    ],
+    "Links": []
   },
   {
-    "ReservationId": 13,
+    "ReservationId": 14,
     "ScreeningId": 1,
     "AccountUsername": "user",
     "ReservedSeats": [
-      69,
-      70,
-      71,
-      72,
-      73
-    ]
+      52,
+      51,
+      32,
+      12
+    ],
+    "Links": []
   }
 ]

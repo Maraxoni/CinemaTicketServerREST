@@ -14,14 +14,12 @@ namespace CinemaTicketServerREST.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Account>> GetAll([FromQuery] string? search)
         {
-            if (string.IsNullOrWhiteSpace(search))
-                return Ok(Accounts);
+            var result = string.IsNullOrWhiteSpace(search)
+                ? Accounts
+                : Accounts.Where(a => a.Username.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
 
-            var filtered = Accounts
-                .Where(a => a.Username.Contains(search, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-
-            return Ok(filtered);
+            var withLinks = result.Select(CreateAccountResource).ToList();
+            return Ok(withLinks);
         }
 
         [HttpPost]
@@ -31,17 +29,21 @@ namespace CinemaTicketServerREST.Controllers
                 return Conflict("Username already exists");
 
             Accounts.Add(account);
-            return CreatedAtAction(nameof(GetByUsername), new { username = account.Username }, account);
+            var resource = CreateAccountResource(account);
+            return CreatedAtAction(nameof(GetByUsername), new { username = account.Username }, resource);
         }
 
         [HttpGet("{username}")]
         public ActionResult<Account> GetByUsername(string username)
         {
             var account = Accounts.FirstOrDefault(a => a.Username == username);
-            return account is null ? NotFound() : Ok(account);
+            if (account is null)
+                return NotFound();
+
+            var resource = CreateAccountResource(account);
+            return Ok(resource);
         }
 
-        // Nowa metoda do logowania
         [HttpPost("login")]
         public IActionResult Login([FromBody] Account loginRequest)
         {
@@ -51,12 +53,25 @@ namespace CinemaTicketServerREST.Controllers
 
             if (user != null)
             {
-                return Ok(new { success = true });
+                var resource = CreateAccountResource(user);
+                return Ok(new { success = true, user = resource });
             }
             else
             {
                 return Unauthorized(new { success = false, message = "Invalid username or password" });
             }
+        }
+
+        // 🔗 Metoda pomocnicza do generowania linków
+        private Account CreateAccountResource(Account account)
+        {
+            var resource = new Account(account);
+
+            resource.Links.Add(new Link(Url.Action(nameof(GetByUsername), new { username = account.Username })!, "self", "GET"));
+            resource.Links.Add(new Link(Url.Action(nameof(Create))!, "create", "POST"));
+            resource.Links.Add(new Link(Url.Action(nameof(Login))!, "login", "POST"));
+
+            return resource;
         }
     }
 }

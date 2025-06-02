@@ -17,6 +17,15 @@ namespace CinemaTicketServerREST.Models
         public DateTime EndTime { get; private set; }
         [DataMember]
         public bool[] AvailableSeats { get; private set; }
+        public List<Link> Links { get; set; } = new();
+        public Screening(Screening screening)
+        {
+            ScreeningID = screening.ScreeningID;
+            MovieID = screening.MovieID;
+            StartTime = screening.StartTime;
+            EndTime = screening.EndTime;
+            AvailableSeats = screening.AvailableSeats;
+        }
 
         [JsonConstructor]
         public Screening(int screeningID, int movieID, DateTime startTime, DateTime endTime, bool[] availableSeats)

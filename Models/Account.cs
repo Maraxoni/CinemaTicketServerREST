@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace CinemaTicketServerREST.Models
 {
@@ -15,7 +16,17 @@ namespace CinemaTicketServerREST.Models
         public string Password { get; set; }
         [DataMember]
         public AccountType Type { get; set; }
+        public List<Link> Links { get; set; } = new();
 
+        public Account() { }
+        public Account(Account account)
+        {
+            Username = account.Username;
+            Password = account.Password;
+            Type = account.Type;
+        }
+
+        [JsonConstructor]
         public Account(string username, string password, AccountType type)
         {
             Username = username;

@@ -25,7 +25,9 @@ namespace CinemaTicketServerREST.Controllers
                         r.AccountUsername.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
 
             LogDataToConsole("GET ALL");
-            return Ok(result);
+
+            var withLinks = result.Select(CreateReservationResource).ToList();
+            return Ok(withLinks);
         }
 
         [HttpGet("{id}")]
@@ -38,8 +40,11 @@ namespace CinemaTicketServerREST.Controllers
                 return NotFound();
             }
 
+            var locationUrl = Url.Action(nameof(GetById), new { id = id });
+            Response.Headers.Add("Location", locationUrl);
+
             Console.WriteLine($"GET {id} – Found: {FormatReservation(reservation)}");
-            return Ok(reservation);
+            return Ok(CreateReservationResource(reservation));
         }
 
         [HttpPost]
@@ -57,7 +62,7 @@ namespace CinemaTicketServerREST.Controllers
             Console.WriteLine($"POST – Created: {FormatReservation(reservation)}");
             LogDataToConsole("AFTER CREATE");
 
-            return CreatedAtAction(nameof(GetById), new { id = reservation.ReservationId }, reservation);
+            return CreatedAtAction(nameof(GetById), new { id = reservation.ReservationId }, CreateReservationResource(reservation));
         }
 
         [HttpPut("{id}")]
@@ -84,7 +89,7 @@ namespace CinemaTicketServerREST.Controllers
             Console.WriteLine($"PUT {id} – Updated: {FormatReservation(existing)}");
             LogDataToConsole("AFTER UPDATE");
 
-            return Ok(existing);
+            return Ok(CreateReservationResource(existing));
         }
 
         [HttpDelete("{id}")]
@@ -147,6 +152,18 @@ namespace CinemaTicketServerREST.Controllers
         private string FormatReservation(Reservation r)
         {
             return $"ReservationID: {r.ReservationId}, User: {r.AccountUsername}, ScreeningID: {r.ScreeningId}, Seats: [{string.Join(",", r.ReservedSeats)}]";
+        }
+
+        private Reservation CreateReservationResource(Reservation reservation)
+        {
+            var resource = new Reservation(reservation);
+
+            resource.Links.Add(new Link(Url.Action(nameof(GetById), new { id = reservation.ReservationId })!, "self", "GET"));
+            resource.Links.Add(new Link(Url.Action(nameof(Create))!, "create", "POST"));
+            resource.Links.Add(new Link(Url.Action(nameof(Update), new { id = reservation.ReservationId })!, "update", "PUT"));
+            resource.Links.Add(new Link(Url.Action(nameof(Delete), new { id = reservation.ReservationId })!, "delete", "DELETE"));
+
+            return resource;
         }
     }
 }

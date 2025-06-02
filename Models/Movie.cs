@@ -24,7 +24,17 @@ namespace CinemaTicketServerREST.Models
 
         [DataMember]
         public byte[] Poster { get; set; }
+        public List<Link> Links { get; set; } = new();
 
+        public Movie(Movie movie)
+        {
+            MovieID = movie.MovieID;
+            Title = movie.Title;
+            Director = movie.Director;
+            Actors = movie.Actors;
+            Description = movie.Description;
+            Poster = movie.Poster;
+        }
         public Movie(string title, string director, List<string> actors, string description, byte[] poster = null)
         {
             MovieID = ++lastId;

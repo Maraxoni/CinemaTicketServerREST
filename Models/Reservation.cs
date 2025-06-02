@@ -15,6 +15,19 @@ namespace CinemaTicketServerREST.Models
 
         [DataMember]
         public List<int> ReservedSeats { get; set; }
+        public List<Link> Links { get; set; } = new();
+
+        public Reservation()
+        {
+            ReservedSeats = new List<int>();
+        }
+        public Reservation(Reservation reservation)
+        {
+            ReservationId = reservation.ReservationId;
+            ScreeningId = reservation.ScreeningId;
+            AccountUsername = reservation.AccountUsername;
+            ReservedSeats = new List<int>(reservation.ReservedSeats);
+        }
 
         public Reservation(int reservationId, int screeningId, String accountUsername, IEnumerable<int> reservedSeats)
         {
@@ -22,11 +35,6 @@ namespace CinemaTicketServerREST.Models
             ScreeningId = screeningId;
             AccountUsername = accountUsername;
             ReservedSeats = new List<int>(reservedSeats);
-        }
-
-        public Reservation()
-        {
-            ReservedSeats = new List<int>();
         }
     }
 }

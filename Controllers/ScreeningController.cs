@@ -21,7 +21,9 @@ namespace CinemaTicketServerREST.Controllers
                 Console.WriteLine(FormatScreening(s));
             }
             Console.WriteLine("---------------------------");
-            return Ok(Screenings);
+
+            var withLinks = Screenings.Select(CreateScreeningResource).ToList();
+            return Ok(withLinks);
         }
 
         [HttpGet("{id}")]
@@ -35,7 +37,7 @@ namespace CinemaTicketServerREST.Controllers
             }
 
             Console.WriteLine($"GET Screening {id} – Found: {FormatScreening(screening)}");
-            return Ok(screening);
+            return Ok(CreateScreeningResource(screening));
         }
 
         [HttpPost]
@@ -52,7 +54,7 @@ namespace CinemaTicketServerREST.Controllers
             }
             Console.WriteLine("---------------------------");
 
-            return CreatedAtAction(nameof(GetById), new { id = screening.ScreeningID }, screening);
+            return CreatedAtAction(nameof(GetById), new { id = screening.ScreeningID }, CreateScreeningResource(screening));
         }
 
         public static void UpdateSeats(Screening updatedScreening)
@@ -71,11 +73,21 @@ namespace CinemaTicketServerREST.Controllers
                 Console.WriteLine($"UpdateSeats – Screening {updatedScreening.ScreeningID} not found.");
             }
         }
+
         private static string FormatScreening(Screening s)
         {
             var seatString = string.Join(",", s.AvailableSeats.Select(b => b ? "1" : "0"));
             return $"ScreeningID: {s.ScreeningID}, MovieID: {s.MovieID}, Start: {s.StartTime}, End: {s.EndTime}, Seats: [{seatString}]";
         }
 
+        private Screening CreateScreeningResource(Screening screening)
+        {
+            var resource = new Screening(screening);
+
+            resource.Links.Add(new Link(Url.Action(nameof(GetById), new { id = screening.ScreeningID })!, "self", "GET"));
+            resource.Links.Add(new Link(Url.Action(nameof(Create))!, "create", "POST"));
+
+            return resource;
+        }
     }
 }
